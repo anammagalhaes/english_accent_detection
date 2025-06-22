@@ -4,14 +4,14 @@ This application detects the **English accent** used in a video (e.g., American,
 
 ## Features
 
-- ✅ Accepts video input in 3 ways:
+- Accepts video input in 3 ways:
   - Direct **upload** of local video files (MP4, WEBM, etc.)
   - URL to video file online (e.g., GitHub raw link)
   - Local file **path** (only when running locally)
 
-- ✅ Extracts the first 40 seconds of audio from the video
-- ✅ Runs accent classification using `HamzaSidhu786/speech-accent-detection`
-- ✅ Returns the most likely accent with a confidence score
+- Extracts the first 40 seconds of audio from the video
+- Runs accent classification using `HamzaSidhu786/speech-accent-detection`
+- Returns the most likely accent with a confidence score
 
 ## How to Use
 

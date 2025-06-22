@@ -1,32 +1,68 @@
-Accent Detection API - Technical Report
+TECHNICAL REPORT - ACCENT DETECTION
 
-Overview:
----------
-This project provides an API to detect the accent of spoken English in video files using the 'HamzaSidhu786/speech-accent-detection' model from Hugging Face. The service extracts audio, runs inference, and returns the most likely accent.
+Date: June 22, 2025
+Project: English Speech Accent Detection App
 
-Why it's valid:
----------------
-Although the model occasionally outputs "Canadian" or "Scottish" inappropriately, this behavior is a known issue due to imbalanced training data. The model still generalizes well for broader distinctions such as "American" vs. "British".
+---
 
-Endpoints:
-----------
-- /upload-audio: Accepts video file uploads (most stable method).
-- /detect-accent-url: Accepts URLs to raw video files (e.g., GitHub).
-- /detect-accent-local: Accepts absolute local file path (use only in development).
+## OVERVIEW
 
-Known Issues:
--------------
-- YouTube download was removed due to rate-limiting and scraping errors (403 Forbidden).
-- Accent classification is limited by the pre-trained model’s dataset bias.
-- Requires FFmpeg installed and accessible via PATH or environment variable.
+This project aims to identify the **accent** of a person speaking English in a video file.
+It utilizes a pretrained model from Hugging Face (`HamzaSidhu786/speech-accent-detection`) and exposes it via a **Gradio interface**. The model performs classification over short audio clips.
 
-Hardware Limitations:
----------------------
-The model runs entirely on CPU. More powerful GPU-based models such as Wav2Vec2 or Whisper were not used due to hardware constraints.
+---
 
-Backlog:
---------
-- Implement GPU-based model alternatives.
-- Add speaker diarization and segment-based accent analysis.
-- Improve error feedback for malformed or unsupported input.
-- Add support for real-time streaming audio analysis.
+## TECHNOLOGY DECISIONS
+
+- **Gradio** was selected for the front-end due to its simple deployment and user-friendly interface.
+- **Hugging Face Spaces** will be used for hosting, which makes the app accessible to anyone through a public URL.
+- FFmpeg is used to extract audio from video files before inference.
+- The backend is Python-based and no longer depends on FastAPI or Docker for deployment.
+
+---
+
+## FUNCTIONALITY
+
+The app provides three input methods for user flexibility:
+
+1. **Video URL (e.g., direct .mp4 on GitHub):**
+   - The backend downloads and processes the video.
+
+2. **Local Path (for internal dev/test only):**
+   - The path to a local video file on disk.
+
+3. **Upload File (preferred for end users):**
+   - Users can upload a file through the Gradio UI.
+
+Each option triggers:
+- Audio extraction (first 40s or a specified window)
+- Accent classification using the model
+
+---
+
+## LIMITATIONS
+
+- The model may predict general results like "English" or incorrect classes due to **dataset imbalance**.
+- Accents like "Canadian" or "Scottish" may appear as top predictions for unrelated accents.
+- FFmpeg is required to extract audio and must be available on the system or included in the Hugging Face Space image.
+- Gradio limits local path access for security — that option is best for local development.
+
+---
+
+## FUTURE WORK / BACKLOG
+
+- Replace or fine-tune the model using more balanced, labeled datasets (like Common Voice or custom English corpora).
+- Evaluate alternatives such as **Wav2Vec 2.0**, **Whisper**, or **HuBERT** for better performance.
+- Add transcript analysis as fallback using Whisper for language cues.
+- Add logging & analytics to track usage and model confidence over time.
+- Add region-specific visualization on prediction map.
+
+---
+
+## HARDWARE CONSTRAINTS
+
+Due to lack of GPU resources, model selection was limited to CPU-optimized pipelines. More advanced models were considered but not feasible without cloud compute or hardware acceleration.
+
+---
+
+Author: Ana Magalhães

@@ -35,7 +35,7 @@ python app_gradio.py
 
 4. A browser window will open automatically.
 
-## Dependencies
+## Dependencies (for local running)
 
 - Python 3.10+
 - `gradio`, `transformers`, `yt_dlp`, `librosa`, `ffmpeg-python`

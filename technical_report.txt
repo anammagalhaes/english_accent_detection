@@ -1,68 +1,62 @@
-TECHNICAL REPORT - ACCENT DETECTION
 
-Date: June 22, 2025
-Project: English Speech Accent Detection App
+# Technical Report – English Accent Detection API 
 
----
+## Objective
 
-## OVERVIEW
+This project aims to detect English accents (e.g., American, British, Canadian, etc.) from speech extracted from video/audio input using Hugging Face models.
 
-This project aims to identify the **accent** of a person speaking English in a video file.
-It utilizes a pretrained model from Hugging Face (`HamzaSidhu786/speech-accent-detection`) and exposes it via a **Gradio interface**. The model performs classification over short audio clips.
+## Pipeline Overview
 
----
+1. Accept input (via URL, local path, or upload).
+2. Extract a 30-second audio segment using `ffmpeg`.
+3. Load and classify the audio using a Hugging Face model (`HamzaSidhu786/speech-accent-detection`).
+4. Return the most likely accent and confidence.
 
-## TECHNOLOGY DECISIONS
+## Decisions
 
-- **Gradio** was selected for the front-end due to its simple deployment and user-friendly interface.
-- **Hugging Face Spaces** will be used for hosting, which makes the app accessible to anyone through a public URL.
-- FFmpeg is used to extract audio from video files before inference.
-- The backend is Python-based and no longer depends on FastAPI or Docker for deployment.
+- The project was initially built with FastAPI and REST endpoints. Due to hardware constraints and deployment limitations, it was migrated to **Gradio + Hugging Face Spaces**, making the app easier to use and accessible via the web.
+- Gradio was selected for its fast prototyping and seamless integration with Hugging Face Spaces.
+- Audio is trimmed to 30 seconds to ensure faster inference and reduce memory usage.
 
----
+## Hardware Constraints
 
-## FUNCTIONALITY
+Due to lack of local GPU resources, only CPU-compatible models were considered.
+Advanced models such as:
+- **Wav2Vec2 (Large)**
+- **Whisper Large**
 
-The app provides three input methods for user flexibility:
+...were **not used** because they require GPU acceleration to run efficiently. Running them on CPU is either too slow or infeasible.
 
-1. **Video URL (e.g., direct .mp4 on GitHub):**
-   - The backend downloads and processes the video.
+## Why Not Use Hugging Face GPU for Large Models?
 
-2. **Local Path (for internal dev/test only):**
-   - The path to a local video file on disk.
+Although Hugging Face Spaces **does offer free GPU access**, it has important **limitations**:
+- GPUs may be in a queue or temporarily unavailable.
+- Runtime is limited (e.g., 30–60 minutes).
+- Memory constraints may crash heavier models like Whisper Large or Wav2Vec2 Large.
 
-3. **Upload File (preferred for end users):**
-   - Users can upload a file through the Gradio UI.
+To ensure stability, a **lightweight CPU-compatible model** was chosen.
 
-Each option triggers:
-- Audio extraction (first 40s or a specified window)
-- Accent classification using the model
+## Model Limitations
 
----
+The model (`HamzaSidhu786/speech-accent-detection`) has known limitations:
+- Can return generic predictions like `"English"` instead of `"British"` or `"American"`.
+- Sometimes misclassifies due to class imbalance in training data (e.g., returning "Canadian" when it's not).
+- More accurate performance would require fine-tuning on a balanced dataset.
 
-## LIMITATIONS
+## Endpoints / Input Modes
 
-- The model may predict general results like "English" or incorrect classes due to **dataset imbalance**.
-- Accents like "Canadian" or "Scottish" may appear as top predictions for unrelated accents.
-- FFmpeg is required to extract audio and must be available on the system or included in the Hugging Face Space image.
-- Gradio limits local path access for security — that option is best for local development.
+The Gradio application provides **three input methods**:
+1. **URL input** – provide a link to a raw video/audio file.
+2. **Local path** – paste the path to a file on the server (for local testing).
+3. **File upload** – upload a video/audio file directly from your device.
 
----
+All methods extract the audio and run the same accent detection pipeline.
 
-## FUTURE WORK / BACKLOG
+## Suggested Improvements
 
-- Replace or fine-tune the model using more balanced, labeled datasets (like Common Voice or custom English corpora).
-- Evaluate alternatives such as **Wav2Vec 2.0**, **Whisper**, or **HuBERT** for better performance.
-- Add transcript analysis as fallback using Whisper for language cues.
-- Add logging & analytics to track usage and model confidence over time.
-- Add region-specific visualization on prediction map.
+- Use Whisper for transcription + keyword detection (hybrid accent detection).
+- Train a balanced classifier for regional English accents.
+- Add audio visualization and playback in the frontend.
+- Deploy via custom Docker + GPU VM for advanced models.
 
----
 
-## HARDWARE CONSTRAINTS
-
-Due to lack of GPU resources, model selection was limited to CPU-optimized pipelines. More advanced models were considered but not feasible without cloud compute or hardware acceleration.
-
----
-
-Author: Ana Magalhães

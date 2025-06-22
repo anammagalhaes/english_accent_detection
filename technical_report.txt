@@ -1,0 +1,32 @@
+Accent Detection API - Technical Report
+
+Overview:
+---------
+This project provides an API to detect the accent of spoken English in video files using the 'HamzaSidhu786/speech-accent-detection' model from Hugging Face. The service extracts audio, runs inference, and returns the most likely accent.
+
+Why it's valid:
+---------------
+Although the model occasionally outputs "Canadian" or "Scottish" inappropriately, this behavior is a known issue due to imbalanced training data. The model still generalizes well for broader distinctions such as "American" vs. "British".
+
+Endpoints:
+----------
+- /upload-audio: Accepts video file uploads (most stable method).
+- /detect-accent-url: Accepts URLs to raw video files (e.g., GitHub).
+- /detect-accent-local: Accepts absolute local file path (use only in development).
+
+Known Issues:
+-------------
+- YouTube download was removed due to rate-limiting and scraping errors (403 Forbidden).
+- Accent classification is limited by the pre-trained model’s dataset bias.
+- Requires FFmpeg installed and accessible via PATH or environment variable.
+
+Hardware Limitations:
+---------------------
+The model runs entirely on CPU. More powerful GPU-based models such as Wav2Vec2 or Whisper were not used due to hardware constraints.
+
+Backlog:
+--------
+- Implement GPU-based model alternatives.
+- Add speaker diarization and segment-based accent analysis.
+- Improve error feedback for malformed or unsupported input.
+- Add support for real-time streaming audio analysis.

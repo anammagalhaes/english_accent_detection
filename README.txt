@@ -2,6 +2,8 @@
 
 This application detects the **English accent** used in a video (e.g., American, British, etc.), using a Gradio interface.
 
+You will find the aplication ready for using here: https://huggingface.co/spaces/ANAMARIAMAGALHAES/detection_accent
+
 ## Features
 
 - Accepts video input in 3 ways:
